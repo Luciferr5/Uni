@@ -1,0 +1,8 @@
+RADIO = OFF,
+OFF = (on -> TOP_FREQ),
+TOP_FREQ = (scan -> SCANNING | reset -> TOP_FREQ | off -> OFF),
+SCANNING = (reset -> TOP_FREQ | lock -> MIDDLE_FREQ | scan -> SCANNING |
+	end -> BOTTOM_FREQ | off -> OFF),
+MIDDLE_FREQ = (reset -> TOP_FREQ | scan -> SCANNING | off -> OFF),
+BOTTOM_FREQ = (reset -> TOP_FREQ | scan -> BOTTOM_FREQ | off -> OFF).
+

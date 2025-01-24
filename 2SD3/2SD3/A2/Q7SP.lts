@@ -1,0 +1,1 @@
+SP = (a -> (b -> SP | a -> SP) | b -> (a -> SP | b -> ERROR)).

@@ -1,0 +1,26 @@
+const P = 2
+PHILOSOPHER = (think -> PHILOSOPHER | get_cookie -> eat_cookie -> PHILOSOPHER 
+				| get_cola -> drink_cola -> PHILOSOPHER).
+||PHILOSOPHERS = (forall[i: 1..P] philosopher[i]:PHILOSOPHER).
+
+
+SERVANT = (fill_cookies -> SERVANT | fill_cola -> SERVANT).
+
+const M = 2
+COOKIES = COOKIES[0],
+COOKIES[i:0..M] = (when (i < M) get_cookie -> COOKIES[i+1]
+					| when (i==M) fill_cookies -> COOKIES[0]).
+
+const N = 2
+COLA = COLA[0],
+COLA[i:0..N] = (when (i < N) get_cola -> COLA[i+1] 
+				| when (i==N) fill_cola -> COLA[0]).
+
+
+property PCOOKIES = PCOOKIES[M],
+PCOOKIES[i:0..M] = (when (i==M) fill_cookies-> PCOOKIES[M]).
+
+property PCOLA = PCOLA[N],
+PCOLA[i:0..N] = (when (i==N) fill_cola-> PCOLA[N]).
+
+||COOKIE_COLA = (PHILOSOPHERS || SERVANT || COOKIES || COLA || PCOOKIES || PCOLA ).
