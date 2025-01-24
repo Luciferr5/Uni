@@ -1,0 +1,44 @@
+const N = 5
+/*
+DIRECTOR models behaviour of museum director
+Assumptions:
+a) there are 2 doors in museum named east and west respectively
+b) director opens east door then west door, then later closes east door then west door
+*/
+DIRECTOR = ( east.open -> west.open -> east.close -> west.close -> DIRECTOR).
+
+/*
+DOOR models behaviour of door
+Assumptions:
+a) door is initially closed
+b) open action models a door opening
+c) through action models a person going through the door 
+d) close action models a door closing
+e) Person can only cross the door when the door is open
+f) Door can only be closed when it is open
+*/
+DOOR = (open -> OPEN),
+	OPEN = (close -> DOOR | through -> OPEN).
+
+/*
+CONTROL models behaviour of control system for museum
+Assumptions:
+a) control keeps count of people currently in museum
+b) control regulates behaviour of doors of museum
+c) control has associated state that indicates number of people currently in the museum
+d) action east.through increases counter for control
+e) action west.through decreases counter for control
+f) action west.close determines if museum is empty
+g) assumed that museum is intially empty
+*/
+CONTROL = CONTROL[0],
+CONTROL[i:0..N] = (when (i < N) east.through -> CONTROL[i + 1]
+				| when (i > 0) west.through -> CONTROL[i - 1]
+				| when (i == 0) west.close -> CONTROL[0]).
+
+/*
+MUSEUM models behaviour of museum
+Assumptions:
+a) people enter through east door and exit through west door 
+*/
+||MUSEUM = (east:DOOR || west:DOOR || DIRECTOR || CONTROL).
