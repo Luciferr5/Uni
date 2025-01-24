@@ -1,5 +1,0 @@
-const N = 10
-
-property LIFT_CAPACITY = LIFT[0],
-LIFT[i:0..N] = (when (i<10) enter -> LIFT[i+1]
-				| when(i>0) exit -> LIFT[i-1]).
