@@ -1,9 +1,0 @@
-HOTEL = (request -> REQUEST),
-REQUEST = (available -> confirmed -> CONFIRMED
-	| not_available -> reservation_list -> RESERVATION),
-CONFIRMED = (use_room -> pay -> leave -> FINISHED 
-	| cancel_reservation -> CANCELLED),
-RESERVATION = (available_room -> CONFIRMED
-	| cancel_request -> CANCELLED),
-FINISHED = (archive -> STOP),
-CANCELLED = (archive -> STOP).
