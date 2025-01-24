@@ -1,0 +1,23 @@
+DRINKS = ZERO,
+ZERO = (in[5] -> FIVE| in[10] -> TEN | in[25] -> TWENTY_FIVE),
+FIVE = (in[5] -> TEN | in[10] -> FIFTEEN | in[25] -> THIRTY),
+TEN = (in[15] -> FIFTEEN | in[10] -> TWENTY | in[25] -> THIRTY_FIVE),
+FIFTEEN = (sugerola -> STOP | in[5] -> TWENTY |  in[10] -> TWENTY_FIVE | in[25] -> FORTY),
+TWENTY = (sugerolaDiet -> STOP | overflow -> sugerola -> return_five -> STOP| in[5] -> TWENTY_FIVE | in[10] -> THIRTY | in[25] -> FORTY_FIVE),
+TWENTY_FIVE = (sugerolaSuperDiet -> STOP | overflow -> sugerolaDiet -> return_five -> STOP | overflow -> sugerola -> return_ten -> STOP 
+| in[5] -> THIRTY |  in[10] -> THIRTY_FIVE | in[25] -> FIFTY),
+THIRTY = (overflow -> sugerola -> return_fifteen -> STOP
+				| overflow -> sugerolaDiet -> return_ten -> STOP
+				| overflow -> sugerolaSuperDiet -> return_five -> STOP),
+THIRTY_FIVE = (overflow -> sugerola -> return_twenty -> STOP
+				| overflow -> sugerolaDiet -> return_fifteen -> STOP
+				| overflow -> sugerolaSuperDiet -> return_ten -> STOP),
+FORTY = (overflow -> sugerola -> return_twenty_five -> STOP
+				| overflow -> sugerolaDiet -> return_ten -> STOP
+				| overflow -> sugerolaSuperDiet -> return_fifteen -> STOP),
+FORTY_FIVE = (overflow -> sugerola -> return_thirty -> STOP
+				| overflow -> sugerolaDiet -> return_thirty_five -> STOP
+				| overflow -> sugerolaSuperDiet -> return_forty -> STOP),
+FIFTY = (overflow -> sugerola -> return_thirty_five -> STOP
+				| overflow -> sugerolaDiet -> return_twenty -> STOP
+				| overflow -> sugerolaSuperDiet -> return_twenty_five -> STOP).

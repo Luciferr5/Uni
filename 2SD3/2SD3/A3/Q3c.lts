@@ -1,0 +1,13 @@
+set Bold = {bold[1..2]}
+set Meek = {meek[1..2]}
+set Customers = {Bold, Meek}
+
+CUSTOMER = (getcheese -> CUSTOMER).
+
+COUNTER = (getcheese -> COUNTER).
+
+||CHEESECOUNTER = (Customers: CUSTOMER || Customers:: COUNTER)>>{Meek.getcheese}.
+
+progress BOLD = {Bold.getcheese}
+
+progress MEEK = {Meek.getcheese}

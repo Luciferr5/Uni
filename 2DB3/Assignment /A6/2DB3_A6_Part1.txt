@@ -1,0 +1,67 @@
+﻿– COMSPCI 2DB3 ASSIGNMENT 6 
+-- Student number: 400451379, MacID: saxenp4;
+
+
+
+
+– Query 1
+
+
+SELECT offer1.product, AVG(pv1.score) AS average_score, AVG(offer1.price) AS average_price, COUNT(s1.offer_id) AS sales, COUNT(DISTINCT offer1.seller_id) AS sellers
+FROM offer offer1
+LEFT JOIN sale s1 ON offer1.oid = s1.offer_id
+LEFT JOIN preview pv1 ON offer1.product = pv1.product
+GROUP BY offer1.product;
+
+
+– Query 2
+
+
+SELECT o1.seller_id AS aid, o2.seller_id 
+FROM offer o1, offer o2
+GROUP BY o1.seller_id, o2.seller_id
+HAVING 
+(COUNT(DISTINCT o1.product) = (SELECT COUNT(*) 
+FROM offer 
+WHERE seller_id = o1.seller_id) ) AND 
+(COUNT(DISTINCT o2.product) = (SELECT COUNT(*) 
+FROM offer 
+WHERE seller_id = o2.seller_id)) 
+WHERE 
+o1.seller_id != o2.seller_id AND
+o1.price = o2.price AND
+o1.product = o2.product;
+
+
+
+
+– Query 3 
+
+
+SELECT u.uid, 10 * ((rp/ np) + (rs / ns)) AS css  
+FROM user u
+LEFT JOIN (SELECT customer_id, COUNT(DISTINCT seller_id) as ns FROM sale s JOIN offer o ON s.offer_id = o.oid GROUP BY customer_id) as sellers ON u.uid = sellers.customer_id
+LEFT JOIN (SELECT user_id, COUNT(*) as rp FROM preview GROUP BY user_id) as product_reviews ON u.uid = product_reviews.user_id
+LEFT JOIN (SELECT customer_id, COUNT(DISTINCT offer_id) as np FROM sale
+GROUP BY customer_id) as purchases ON u.uid = purchases.customer_id
+WHERE  (rp+rs) >= 10;
+
+
+(I tried my best but could not figure out the rest of the code *insert sad emoji*)
+
+
+– Query 4
+
+
+SELECT uid,  2 * (numerator / (total_reviews * (total_reviews + 1))) AS tsr
+FROM CumScore
+WITH SellerRev AS (
+SELECT o.seller_id AS uid, sr.score * ROW_NUMBER() OVER (PARTITION BY o.seller_id ORDER BY s.time) AS weighted_score,
+COUNT(*) OVER (PARTITION BY o.seller_id) AS total_reviews
+FROM sreview sr
+JOIN sale s ON sr.sale_id = s.sid
+JOIN offer o ON s.offer_id = o.oid), AND
+CumScore AS (
+SELECT uid, SUM(weighted_score) AS numerator, total_reviews
+FROM SellerReviews
+GROUP BY uid, total_reviews);

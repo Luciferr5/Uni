@@ -1,0 +1,160 @@
+﻿COMPSCI 2DB3
+Assignment 3
+Prakhar Saxena 
+saxenp4
+40041379
+
+
+________________
+
+
+
+
+Part 1
+
+
+– Table 1
+
+
+CREATE TABLE user(
+mid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+email VARCHAR(200) NOT NULL UNIQUE ,
+password VARCHAR(100) NOT NULL
+)
+
+
+
+
+– Table 2
+
+
+CREATE TABLE consumer(
+mid INT NOT NULL PRIMARY KEY REFERENCES user(mid),
+address VARCHAR(200) NOT NULL
+)
+
+
+
+
+– Table 3
+
+
+CREATE TABLE producer(
+mid INT NOT NULL PRIMARY KEY REFERENCES user(mid),
+name CLOB NOT NULL
+)
+
+
+
+
+– Table 4
+
+
+CREATE TABLE produce(
+pid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+name CLOB NOT NULL,
+description CLOB
+)
+
+
+
+
+– Table 5
+
+
+CREATE TABLE sale(
+sid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+date DATE,
+buyerid INT NOT NULL REFERENCES consumer(mid)
+)
+
+
+
+
+– Table 6
+
+
+CREATE TABLE offer(
+mid INT NOT NULL REFERENCES producer(mid),
+pid INT NOT NULL REFERENCES produce(pid),
+price DECIMAL NOT NULL,
+week DATE NOT NULL,
+PRIMARY KEY (mid,pid,week)
+)
+
+
+
+
+
+
+– Table 7
+
+
+CREATE TABLE boffer(
+mid INT NOT NULL REFERENCES offer(mid),
+pid INT NOT NULL REFERENCES offer(pid),
+week DATE NOT NULL REFERENCES offer(week),
+sid INT NOT NULL REFERENCES sale(sid),
+amount INT NOT NULL,
+PRIMARY KEY(mid,pid,week,sid)
+)
+
+
+
+
+________________
+
+
+
+
+Part 2
+
+
+– Table 1
+
+
+CREATE TABLE review(
+rid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+sid INT NOT NULL REFERENCES sale(sid),
+uid INT NOT NULL REFERNECES sale(buyerid),
+score INT NOT NULL,
+date DATE,
+description CLOB
+)
+
+
+
+
+– Table 2
+
+
+CREATE TABLE reviewvote(
+rid INT NOT NULL REFERENCES review(rid),
+uid INT NOT NULL REFERENCES user(mid),
+votetype VARCHAR(8),
+CHECK (votetype = ‘upvote’ OR votetype = ‘downvote’ OR votetype = ‘neutral’),
+PRIMARY KEY (uid,rid)
+)
+
+
+– View 1
+
+
+CREATE VIEW sellerscore
+AS SELECT COUNT(r.score), AVG(review.score), producer.mid
+FROM sale, review, boffer, producer 
+WHERE sale.sid = review.sid AND boffer.sid = sale.sid
+GROUP BY producer.mid
+
+
+– View 2
+
+
+CREATE VIEW comments(
+cid INT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+description CLOB NOT NULL,
+title CLOB NOT NULL,
+uid INT NOT NULL REFERNECES user(mid),
+date DATE NOT NULL,
+reaction CLOB
+)

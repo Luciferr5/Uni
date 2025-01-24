@@ -1,0 +1,79 @@
+﻿-- Student number: 400451379, MacID: saxenp4
+
+
+-- Query 1.
+SELECT sr.*
+FROM sreview sr, sale s, offer o
+WHERE sr.sid = s.sid
+AND s.CUSTOMER_ID = o.SELLER_ID
+AND s.OFFER_ID = o.OID
+ORDER BY sr.score DESC;
+
+
+-- Query 2.
+SELECT DISTINCT u.UID
+FROM "USER" u, "USER" u2, SALE s, SALE s2, OFFER o, OFFER o2 
+WHERE s.OFFER_ID = O.OID
+AND u.UID = s.customer_id
+AND s2.OFFER_ID = O2.OID
+AND U2.UID = O2.SELLER_ID
+AND s2."TIME" > s."TIME"
+AND s.customer_id = O2.SELLER_ID
+AND O2.PRICE > O.PRICE
+AND O.PRODUCT = O2.PRODUCT
+
+
+-- Query 3.
+SELECT *
+FROM user u
+WHERE u.uid IN (SELECT p.user_id FROM preview p )
+AND u.uid NOT IN (SELECT sr.sid FROM sreview sr )
+AND u.uid NOT IN (SELECT s.customer_id FROM sale s )
+AND u.uid NOT IN (SELECT o.seller_id FROM offer o );
+
+
+-- Query 4.
+WITH Average AS (
+   SELECT PRODUCT, AVG(PRICE) AS PRICE
+   FROM OFFER
+   GROUP BY PRODUCT
+)
+SELECT *
+FROM OFFER o, Average a
+WHERE  o.PRODUCT = a.PRODUCT
+AND  o.PRICE < (0.8 * a.PRICE);
+
+
+
+
+
+
+-- Query 5.
+WITH data AS (SELECT s.CUSTOMER_ID  AS user_id, COUNT(s.SID) AS x, COUNT(sr.SID) AS y
+FROM SALE s
+LEFT JOIN SREVIEW sr ON s.SID = sr.SID
+GROUP BY s.CUSTOMER_ID
+HAVING COUNT(s.SID) > 0)
+SELECT d.user_id, d.x, d.y
+FROM DATA d;
+
+
+-- Query 6.
+WITH products AS (
+   SELECT u.UID, o.PRODUCT
+   FROM "USER" u
+   JOIN SALE s ON u.UID = s.CUSTOMER_ID
+   JOIN OFFER o ON s.OFFER_ID = o.OID
+),
+uniqueProduct AS (
+   SELECT PRODUCT
+   FROM products
+   GROUP BY PRODUCT
+)
+SELECT DISTINCT p.UID, up.PRODUCT
+FROM products AS p JOIN uniqueProduct up ON up.PRODUCT !=
+ALL (
+   SELECT PRODUCT
+   FROM products
+   WHERE UID = p.UID
+);
